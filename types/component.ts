@@ -1,4 +1,5 @@
-import type { MenuProps } from "antd";
+import { Rate } from "antd";
+import type { MenuProps, GetRef } from "antd";
 
 export type MenuItem = Required<MenuProps>["items"][number];
 
@@ -15,3 +16,5 @@ export type CommentProps = {
 export type CommentListProps = {
 	productId: string;
 };
+
+export type RateRef = GetRef<typeof Rate>;

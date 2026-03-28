@@ -1,35 +1,65 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { CommentProps, CommentListProps } from "@/types/component";
 import { getCommentList } from "@/services/comment";
+import { useMessageStore } from "@/store/messageStore";
+import { addComment } from "@/services/comment";
 
-import { Button, Menu, Skeleton } from "antd";
+import { Button, Menu, Rate, Skeleton } from "antd";
 import { ArrowUpOutlined, CommentOutlined } from "@ant-design/icons";
 import Comment from "@/components/commen/Comment";
 import "./index.scss";
+import { getStorageItem } from "@/lib/storage";
 
 export default function CommentList({ productId }: CommentListProps) {
 	const [data, setData] = useState<CommentProps[]>([]);
+	const [rate, setRate] = useState<number>(0);
 	const [isLoading, setIsLoading] = useState(true);
+	const [isSubmiting, setIsSubmitting] = useState(false);
 	const textRef = useRef<HTMLTextAreaElement>(null);
+	const { messageSuccess, messageError } = useMessageStore();
 
-	useEffect(() => {
-		const fetchData = async () => {
-			getCommentList({ productId })
-				.then(res => {
-					setData(res);
-				})
-				.finally(() => {
-					setIsLoading(false);
-				});
-		};
-		fetchData();
+	const fetchData = useCallback(async () => {
+		getCommentList({ productId })
+			.then(res => {
+				setData(res);
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
 	}, [productId]);
 
+	useEffect(() => {
+		fetchData();
+	}, [productId, fetchData]);
+
 	const handleSubmit = () => {
-		if (textRef.current?.value) {
-			console.log(textRef.current?.value);
-			textRef.current.value = "";
+		const userId = getStorageItem("id");
+		if (!userId) {
+			messageError("请先登录!");
+			return;
 		}
+		if (!textRef.current?.value) {
+			messageError("请输入内容!");
+			return;
+		}
+		setIsSubmitting(true);
+		addComment({
+			content: textRef.current.value,
+			rate: rate * 2,
+			productId: productId,
+			userId: userId,
+		})
+			.then(() => {
+				messageSuccess("评论成功!");
+				fetchData();
+				if (textRef.current) textRef.current.value = "";
+			})
+			.catch(() => {
+				messageError("评论失败!");
+			})
+			.finally(() => {
+				setIsSubmitting(false);
+			});
 	};
 
 	return (
@@ -65,6 +95,16 @@ export default function CommentList({ productId }: CommentListProps) {
 						<div className="box-container">
 							<textarea placeholder="发表你的评论吧" ref={textRef} />
 							<div>
+								<Rate
+									allowHalf
+									value={rate}
+									style={{
+										padding: "12px 5px 10px",
+									}}
+									onChange={value => {
+										setRate(value);
+									}}
+								/>
 								<div className="formatting">
 									<button type="button">
 										<svg
@@ -190,6 +230,7 @@ export default function CommentList({ productId }: CommentListProps) {
 										shape="circle"
 										icon={<ArrowUpOutlined />}
 										onClick={handleSubmit}
+										loading={isSubmiting}
 									/>
 								</div>
 							</div>

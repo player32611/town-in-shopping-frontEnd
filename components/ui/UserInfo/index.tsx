@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import type { MenuProps } from "antd";
 import { Avatar, Dropdown, Space } from "antd";
 import { DownOutlined, UserOutlined } from "@ant-design/icons";
-import { getStorageItem } from "@/lib/storage";
+import { getStorageItem, removeStorageItem } from "@/lib/storage";
 
 const items: MenuProps["items"] = [
 	{
@@ -14,36 +14,55 @@ const items: MenuProps["items"] = [
 
 const onClick: MenuProps["onClick"] = ({ key }) => {
 	if (key === "signOut") {
-		localStorage.removeItem("name");
-		localStorage.removeItem("avatar");
-		localStorage.removeItem("roleId");
+		removeStorageItem("id");
+		removeStorageItem("name");
+		removeStorageItem("avatar");
+		removeStorageItem("roleId");
 		window.location.reload();
 	}
 };
 
 export default function UserInfo(props: { handleLogin: () => void }) {
-	const [name, setName] = useState<string | null>();
+	const [isLoading, setIsLoading] = useState(true);
+	const [userName, setUserName] = useState<string | null>(null);
+	const [userAvatar, setUserAvatar] = useState<string | null>(null);
+
+	const getData = useCallback(() => {
+		const name = getStorageItem("name");
+		const avatar = getStorageItem("avatar");
+		setUserName(name);
+		setUserAvatar(avatar);
+		setIsLoading(false);
+	}, []);
 
 	useEffect(() => {
-		const storedName = getStorageItem("name");
-		if (storedName) setName(storedName);
-	}, [setName]);
+		getData();
+	}, [getData]);
 
 	return (
-		<Space wrap size={16} align="center">
-			{name ? (
-				<Dropdown menu={{ items, onClick }} trigger={["click"]}>
-					<a onClick={e => e.preventDefault()}>
-						<Space>
-							{name}
-							<DownOutlined />
-						</Space>
-					</a>
-				</Dropdown>
+		<>
+			{isLoading ? (
+				<Space wrap size={16} align="center">
+					<a>加载中...</a>
+					<Avatar icon={<UserOutlined />} />
+				</Space>
 			) : (
-				<a onClick={props.handleLogin}>点击登录</a>
+				<Space wrap size={16} align="center">
+					{userName ? (
+						<Dropdown menu={{ items, onClick }} trigger={["click"]}>
+							<a onClick={e => e.preventDefault()}>
+								<Space>
+									{userName}
+									<DownOutlined />
+								</Space>
+							</a>
+						</Dropdown>
+					) : (
+						<a onClick={props.handleLogin}>点击登录</a>
+					)}
+					<Avatar size="large" src={userAvatar} icon={<UserOutlined />} />
+				</Space>
 			)}
-			<Avatar icon={<UserOutlined />} />
-		</Space>
+		</>
 	);
 }

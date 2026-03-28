@@ -1,6 +1,6 @@
 import type { CommentProps } from "@/types/component";
 
-import { Avatar } from "antd";
+import { Avatar, Rate } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import "./index.scss";
 
@@ -45,6 +45,7 @@ export default function Comment(props: CommentProps) {
 						<p>{props.createTime}</p>
 					</div>
 				</div>
+				<Rate disabled allowHalf defaultValue={props.rate / 2}></Rate>
 				<p className="comment-content">{props.content}</p>
 			</div>
 		</div>

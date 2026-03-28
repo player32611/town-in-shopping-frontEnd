@@ -6,7 +6,8 @@ import { postUserDelete } from "@/services/user";
 import { useEffect, useState } from "react";
 import { useMessageStore } from "@/store/messageStore";
 
-import { Button, Empty, Skeleton, Space, Table } from "antd";
+import { Avatar, Button, Empty, Skeleton, Space, Table } from "antd";
+import { UserOutlined } from "@ant-design/icons";
 import type { TableProps } from "antd";
 import { getStorageItem } from "@/lib/storage";
 
@@ -33,19 +34,20 @@ export default function Accounts() {
 			title: "用户头像",
 			dataIndex: "avatar",
 			key: "avatar",
+			render: avatar => <Avatar size="large" src={avatar} icon={<UserOutlined />}></Avatar>,
 		},
 		{
 			title: "身份",
-			dataIndex: "role_id",
-			key: "role_id",
-			render: role_id => {
-				switch (role_id) {
-					case "1":
+			dataIndex: "roleId",
+			key: "roleId",
+			render: roleId => {
+				switch (roleId) {
+					case 1:
 						return <Space size="middle">管理员</Space>;
-					case "2":
+					case 2:
 						return <Space size="middle">商家</Space>;
 					default:
-						return <Space size="middle">{role_id}普通用户</Space>;
+						return <Space size="middle">普通用户</Space>;
 				}
 			},
 		},
@@ -58,7 +60,12 @@ export default function Accounts() {
 		{
 			key: "delete",
 			render: (_, record) => (
-				<Button type="primary" onClick={() => handleDelete(record.id)} danger>
+				<Button
+					type="primary"
+					onClick={() => handleDelete(record.id)}
+					disabled={getStorageItem("id") == record.id}
+					danger
+				>
 					删除
 				</Button>
 			),
@@ -101,22 +108,18 @@ export default function Accounts() {
 
 	return (
 		<>
-			{getStorageItem("roleId") !== "1" ? (
-				<div>无权限</div>
-			) : (
-				<>
-					{loading ? (
-						<Skeleton active />
-					) : (
-						<Table<UserList>
-							columns={columns}
-							pagination={{ placement: ["bottomCenter"] }}
-							dataSource={data}
-							locale={{ emptyText: <Empty description="暂无数据" /> }}
-						/>
-					)}
-				</>
-			)}
+			<>
+				{loading ? (
+					<Skeleton active />
+				) : (
+					<Table<UserList>
+						columns={columns}
+						pagination={{ placement: ["bottomCenter"] }}
+						dataSource={data}
+						locale={{ emptyText: <Empty description="暂无数据" /> }}
+					/>
+				)}
+			</>
 		</>
 	);
 }

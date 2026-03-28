@@ -1,14 +1,9 @@
 import type { MenuItem } from "@/types/component";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { getStorageItem } from "@/lib/storage";
 import { useMessageStore } from "@/store/messageStore";
 
-import {
-	DesktopOutlined,
-	ShoppingCartOutlined,
-	TeamOutlined,
-	UserOutlined,
-} from "@ant-design/icons";
+import { DesktopOutlined, ShoppingCartOutlined, TeamOutlined } from "@ant-design/icons";
 import { Menu } from "antd";
 
 function getItem(
@@ -28,17 +23,12 @@ function getItem(
 const items: MenuItem[] = [
 	getItem("首页", "/", <DesktopOutlined />),
 	getItem("购物车", "/cart", <ShoppingCartOutlined />),
-	// getItem("User", "sub1", <UserOutlined />, [
-	// 	getItem("Tom", "3"),
-	// 	getItem("Bill", "4"),
-	// 	getItem("Alex", "5"),
-	// ]),
 	getItem("账号管理", "/accounts", <TeamOutlined />),
-	// getItem("个人中心", "9", <UserOutlined />),
 ];
 
 export default function SiderBar() {
 	const router = useRouter();
+	const pathName = usePathname();
 	const { messageError } = useMessageStore();
 
 	const handleClick = (key: string) => {
@@ -61,7 +51,7 @@ export default function SiderBar() {
 			<div className="demo-logo-vertical"></div>
 			<Menu
 				theme="dark"
-				defaultSelectedKeys={["/"]}
+				defaultSelectedKeys={[pathName]}
 				mode="inline"
 				items={items}
 				onClick={({ key }) => handleClick(key)}

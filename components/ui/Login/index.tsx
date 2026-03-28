@@ -5,6 +5,7 @@ import { useMessageStore } from "@/store/messageStore";
 import type { FormItemProps, FormProps } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Flex, Form, Input, Modal } from "antd";
+import { setStorageItem } from "@/lib/storage";
 
 const formItemLayout: FormProps = {
 	labelCol: {
@@ -40,9 +41,10 @@ export default function Login(props: { isModalOpen: boolean; handleClose: () => 
 			if (res) {
 				console.log(res);
 				messageSuccess("登录成功");
-				localStorage.setItem("name", res.name);
-				localStorage.setItem("avatar", res.avatar);
-				localStorage.setItem("roleId", res.roleId);
+				setStorageItem("id", res.id);
+				setStorageItem("name", res.name);
+				setStorageItem("avatar", res.avatar);
+				setStorageItem("roleId", res.roleId);
 				props.handleClose();
 				window.location.reload();
 			} else {
@@ -54,11 +56,11 @@ export default function Login(props: { isModalOpen: boolean; handleClose: () => 
 	const handleRegister = (values: { name: string; password: string }) => {
 		postUserRegister({ name: values.name, password: values.password }).then(res => {
 			if (res) {
-				console.log(res);
 				messageSuccess("注册成功");
-				localStorage.setItem("name", res.name);
-				localStorage.setItem("avatar", res.avatar);
-				localStorage.setItem("roleId", res.roleId);
+				setStorageItem("id", res.id);
+				setStorageItem("name", res.name);
+				setStorageItem("avatar", res.avatar);
+				setStorageItem("roleId", res.roleId);
 				props.handleClose();
 				window.location.reload();
 			} else {
