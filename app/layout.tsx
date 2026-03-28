@@ -38,11 +38,32 @@ export default function RootLayout({
 				<AntdRegistry>
 					{contextHolder}
 					<Layout style={{ minHeight: "100vh" }}>
-						<Sider>
+						<Sider
+							style={{
+								overflow: "auto",
+								height: "100vh",
+								position: "sticky",
+								insetInlineStart: 0,
+								top: 0,
+								scrollbarWidth: "thin",
+								scrollbarGutter: "stable",
+							}}
+						>
 							<SiderBar />
 						</Sider>
 						<Layout>
-							<Header style={{ padding: 0, background: colorBgContainer }}>
+							<Header
+								style={{
+									position: "sticky",
+									top: 0,
+									zIndex: 1,
+									width: "100%",
+									display: "flex",
+									alignItems: "center",
+									padding: 0,
+									background: colorBgContainer,
+								}}
+							>
 								<Flex
 									align="center"
 									justify="space-evenly"

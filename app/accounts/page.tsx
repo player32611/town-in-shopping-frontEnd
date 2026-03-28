@@ -6,7 +6,7 @@ import { postUserDelete } from "@/services/user";
 import { useEffect, useState } from "react";
 import { useMessageStore } from "@/store/messageStore";
 
-import { Button, Skeleton, Space, Table } from "antd";
+import { Button, Empty, Skeleton, Space, Table } from "antd";
 import type { TableProps } from "antd";
 import { getStorageItem } from "@/lib/storage";
 
@@ -112,6 +112,7 @@ export default function Accounts() {
 							columns={columns}
 							pagination={{ placement: ["bottomCenter"] }}
 							dataSource={data}
+							locale={{ emptyText: <Empty description="暂无数据" /> }}
 						/>
 					)}
 				</>
