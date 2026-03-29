@@ -1,12 +1,12 @@
 "use client";
 
 import type { UserList } from "@/types/user";
-import { getUserAll } from "@/services/user";
+import { getUserAll, postUserSetRole } from "@/services/user";
 import { postUserDelete } from "@/services/user";
 import { useEffect, useState } from "react";
 import { useMessageStore } from "@/store/messageStore";
 
-import { Avatar, Button, Empty, Popconfirm, Skeleton, Space, Table } from "antd";
+import { Avatar, Button, Empty, Popconfirm, Select, Skeleton, Space, Table } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import type { TableProps } from "antd";
 import { getStorageItem } from "@/lib/storage";
@@ -28,7 +28,6 @@ export default function Accounts() {
 			title: "昵称",
 			dataIndex: "name",
 			key: "name",
-			render: text => <a>{text}</a>,
 		},
 		{
 			title: "用户头像",
@@ -40,15 +39,32 @@ export default function Accounts() {
 			title: "身份",
 			dataIndex: "roleId",
 			key: "roleId",
-			render: roleId => {
-				switch (roleId) {
-					case 1:
-						return <Space size="middle">管理员</Space>;
-					case 2:
-						return <Space size="middle">商家</Space>;
-					default:
-						return <Space size="middle">普通用户</Space>;
-				}
+			render: (roleId, record) => {
+				const getRoleName = (roleId: number) => {
+					switch (roleId) {
+						case 1:
+							return "管理员";
+						case 2:
+							return "商家";
+						default:
+							return "普通用户";
+					}
+				};
+				return getStorageItem("roleId") == "1" ? (
+					<Select
+						defaultValue={getRoleName(roleId)}
+						style={{ width: 120 }}
+						onChange={value => handleSetRole(record.id, value)}
+						disabled={getStorageItem("id") == record.id.toString()}
+						options={[
+							{ value: "1", label: "管理员" },
+							{ value: "2", label: "商家" },
+							{ value: "3", label: "普通用户" },
+						]}
+					/>
+				) : (
+					<Space>{getRoleName(roleId)}</Space>
+				);
 			},
 		},
 		{
@@ -73,6 +89,16 @@ export default function Accounts() {
 			),
 		},
 	];
+
+	const handleSetRole = (userId: string, roleId: string) => {
+		postUserSetRole({ userId, roleId })
+			.then(() => {
+				messageSuccess("修改成功");
+			})
+			.catch(() => {
+				messageError("修改失败");
+			});
+	};
 
 	const fetchUsers = async () => {
 		try {

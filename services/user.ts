@@ -19,3 +19,8 @@ export async function postUserDelete(data: { id: string }) {
 	const res = await request.post(`/user/delete?id=${data.id}`);
 	return res.data;
 }
+
+export async function postUserSetRole(data: { userId: string; roleId: string }) {
+	const res = await request.post(`/user/setRole?id=${data.userId}&roleId=${data.roleId}`);
+	return res.data;
+}
