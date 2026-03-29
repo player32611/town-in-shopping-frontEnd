@@ -63,7 +63,7 @@ export default function Accounts() {
 				<Button
 					type="primary"
 					onClick={() => handleDelete(record.id)}
-					disabled={getStorageItem("id") == record.id}
+					disabled={getStorageItem("id") == record.id.toString()}
 					danger
 				>
 					删除
@@ -110,7 +110,20 @@ export default function Accounts() {
 		<>
 			<>
 				{loading ? (
-					<Skeleton active />
+					<>
+						<Skeleton
+							active
+							style={{
+								marginBottom: 20,
+							}}
+						/>
+						<Skeleton
+							active
+							style={{
+								marginBottom: 20,
+							}}
+						/>
+					</>
 				) : (
 					<Table<UserList>
 						columns={columns}

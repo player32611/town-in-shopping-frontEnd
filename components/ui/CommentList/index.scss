@@ -1,4 +1,4 @@
-.card {
+.commentList {
 	width: 100%;
 	height: fit-content;
 	background-color: white;
@@ -90,16 +90,4 @@
 
 .text-box .formatting .send:hover {
 	background-color: #026eda;
-}
-
-@keyframes ripple {
-	0% {
-		transform: scale(0);
-		opacity: 0.6;
-	}
-
-	100% {
-		transform: scale(1);
-		opacity: 0;
-	}
 }

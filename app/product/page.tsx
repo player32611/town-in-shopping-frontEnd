@@ -16,20 +16,6 @@ export default function Product() {
 	const searchParams = useSearchParams();
 	const id = searchParams.get("id") || "";
 
-	useEffect(() => {
-		const fetchData = async () => {
-			getProductDetails({ id })
-				.then(res => {
-					setData(res);
-				})
-				.finally(() => {
-					setIsLoading(false);
-				});
-		};
-
-		fetchData();
-	}, [id]);
-
 	const items: DescriptionsProps["items"] = [
 		{
 			key: "price",
@@ -58,6 +44,22 @@ export default function Product() {
 		},
 	];
 
+	const handleAddCart = async () => {};
+
+	useEffect(() => {
+		const fetchData = async () => {
+			getProductDetails({ id })
+				.then(res => {
+					setData(res);
+				})
+				.finally(() => {
+					setIsLoading(false);
+				});
+		};
+
+		fetchData();
+	}, [id]);
+
 	return (
 		<>
 			{isLoading ? (
@@ -66,7 +68,7 @@ export default function Product() {
 				<Space orientation="vertical" size="middle">
 					<Image src={data?.picture} alt={data?.name} width={300} />
 					<Descriptions title={data?.name} items={items} />
-					<Button type="primary" icon={<ShoppingCartOutlined />}>
+					<Button type="primary" icon={<ShoppingCartOutlined />} onClick={handleAddCart}>
 						添加到购物车
 					</Button>
 					<CommentList productId={id} />

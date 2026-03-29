@@ -1,149 +1,145 @@
 "use client";
 
-import { Button, InputNumber } from "antd";
-import type { InputNumberProps } from "antd";
+import { useEffect, useState } from "react";
+import { useMessageStore } from "@/store/messageStore";
+import { getCartList } from "@/services/cart";
+import { getStorageItem } from "@/lib/storage";
+import type { Cart } from "@/types/cart";
+
+import { Button, Checkbox, Col, Empty, InputNumber, Row, Skeleton } from "antd";
+import type { CheckboxProps } from "antd";
+import CartItem from "@/components/commen/CartItem";
 import "./index.scss";
 
-const onChange: InputNumberProps["onChange"] = value => {
-	console.log("changed", value);
-};
-
-const sharedProps = {
-	mode: "spinner" as const,
-	min: 1,
-	max: 10,
-	defaultValue: 3,
-	onChange,
-	style: { width: 150 },
-};
-
 export default function Cart() {
+	const [isLoading, setIsLoading] = useState<boolean>(true);
+	const [data, setData] = useState<Cart[]>([]);
+	const [checkedList, setCheckedList] = useState<string[]>([]);
+	const checkAll = data.length === checkedList.length;
+	const indeterminate = checkedList.length > 0 && checkedList.length < data.length;
+	const { messageError } = useMessageStore();
+
+	const onCheck = (itemId: string, checked: boolean) => {
+		if (checked) {
+			setCheckedList(prev => [...prev, itemId]);
+		} else {
+			setCheckedList(prev => prev.filter(id => id !== itemId));
+		}
+	};
+
+	const onCheckAllChange: CheckboxProps["onChange"] = e => {
+		setCheckedList(e.target.checked ? data.map(item => item.id) : []);
+	};
+
+	const onChangeAmount = (id: string, value: number | null) => {
+		if (!value) return;
+		const newData = structuredClone(data);
+		newData[data.findIndex(item => item.id === id)].amount = value;
+		setData(newData);
+	};
+
+	// const sharedProps = {
+	// 	mode: "spinner" as const,
+	// 	min: 1,
+	// 	max: 10,
+	// 	onChange: onChangeAmount,
+	// };
+
+	const getTotalPrice = () => {
+		let total = 0;
+		data.forEach(item => {
+			if (checkedList.includes(item.id)) {
+				total += item.price * item.amount;
+			}
+		});
+		return total;
+	};
+
+	useEffect(() => {
+		const fetchData = async () => {
+			const userId = getStorageItem("id");
+			if (!userId) {
+				messageError("请先登录");
+				return;
+			}
+			setIsLoading(true);
+			getCartList({ userId })
+				.then(res => {
+					setData(res);
+				})
+				.catch(() => {
+					messageError("获取失败");
+				})
+				.finally(() => {
+					setIsLoading(false);
+				});
+		};
+		fetchData();
+	}, [messageError]);
+
 	return (
 		<>
-			<div className="card cart">
-				<div className="products">
-					<div className="product">
-						<svg
-							fill="none"
-							viewBox="0 0 60 60"
-							height="60"
-							width="60"
-							xmlns="http://www.w3.org/2000/svg"
-						>
-							<rect fill="#FFF6EE" rx="8.25" height="60" width="60"></rect>
-							<path
-								strokeLinejoin="round"
-								strokeLinecap="round"
-								strokeWidth="2.25"
-								stroke="#FF8413"
-								fill="#FFB672"
-								d="M34.2812 18H25.7189C21.9755 18 18.7931 20.5252 17.6294 24.0434C17.2463 25.2017 17.0547 25.7808 17.536 26.3904C18.0172 27 18.8007 27 20.3675 27H39.6325C41.1993 27 41.9827 27 42.4639 26.3904C42.9453 25.7808 42.7538 25.2017 42.3707 24.0434C41.207 20.5252 38.0246 18 34.2812 18Z"
-							></path>
-							<path
-								fill="#FFB672"
-								d="M18 36H17.25C16.0074 36 15 34.9926 15 33.75C15 32.5074 16.0074 31.5 17.25 31.5H29.0916C29.6839 31.5 30.263 31.6754 30.7557 32.0039L33.668 33.9453C34.1718 34.2812 34.8282 34.2812 35.332 33.9453L38.2443 32.0039C38.7371 31.6754 39.3161 31.5 39.9084 31.5H42.75C43.9926 31.5 45 32.5074 45 33.75C45 34.9926 43.9926 36 42.75 36H42M18 36L18.6479 38.5914C19.1487 40.5947 20.9486 42 23.0135 42H36.9865C39.0514 42 40.8513 40.5947 41.3521 38.5914L42 36M18 36H28.5ZM42 36H39.75Z"
-							></path>
-							<path
-								strokeLinejoin="round"
-								strokeLinecap="round"
-								strokeWidth="2.25"
-								stroke="#FF8413"
-								d="M18 36H17.25C16.0074 36 15 34.9926 15 33.75C15 32.5074 16.0074 31.5 17.25 31.5H29.0916C29.6839 31.5 30.263 31.6754 30.7557 32.0039L33.668 33.9453C34.1718 34.2812 34.8282 34.2812 35.332 33.9453L38.2443 32.0039C38.7371 31.6754 39.3161 31.5 39.9084 31.5H42.75C43.9926 31.5 45 32.5074 45 33.75C45 34.9926 43.9926 36 42.75 36H42M18 36L18.6479 38.5914C19.1487 40.5947 20.9486 42 23.0135 42H36.9865C39.0514 42 40.8513 40.5947 41.3521 38.5914L42 36M18 36H28.5M42 36H39.75"
-							></path>
-							<path
-								strokeLinejoin="round"
-								strokeLinecap="round"
-								strokeWidth="3"
-								stroke="#FF8413"
-								d="M34.512 22.5H34.4982"
-							></path>
-							<path
-								strokeLinejoin="round"
-								strokeLinecap="round"
-								strokeWidth="2.25"
-								stroke="#FF8413"
-								d="M27.75 21.75L26.25 23.25"
-							></path>
-						</svg>
-						<div>
-							<span>Cheese Burger</span>
-							<p>Extra Spicy</p>
-							<p>No mayo</p>
+			{isLoading ? (
+				<Skeleton />
+			) : (
+				<>
+					<div className="cart">
+						<div className="products">
+							{data.length ? (
+								data.map(item => (
+									<Row key={item.id} align="middle">
+										<Col flex="30px">
+											<Checkbox
+												checked={checkedList.includes(item.id)}
+												onChange={e => onCheck(item.id, e.target.checked)}
+											></Checkbox>
+										</Col>
+										<Col flex="auto">
+											<CartItem
+												id={item.id}
+												name={item.name}
+												picture={item.picture}
+												price={item.price}
+												amount={item.amount}
+												addTime={item.addTime}
+											>
+												<InputNumber
+													mode="spinner"
+													placeholder="Outlined"
+													value={item.amount}
+													style={{
+														width: 150,
+													}}
+													onChange={value => onChangeAmount(item.id, value)}
+												/>
+											</CartItem>
+										</Col>
+									</Row>
+								))
+							) : (
+								<Empty />
+							)}
 						</div>
-						<InputNumber {...sharedProps} placeholder="Outlined" />
-						<div className="price small">$23.99</div>
 					</div>
-					<div className="product">
-						<svg
-							fill="none"
-							viewBox="0 0 60 60"
-							height="60"
-							width="60"
-							xmlns="http://www.w3.org/2000/svg"
-						>
-							<rect fill="#FFF6EE" rx="8.25" height="60" width="60"></rect>
-							<path
-								strokeLinejoin="round"
-								strokeLinecap="round"
-								strokeWidth="2.25"
-								stroke="#FF8413"
-								fill="#FFB672"
-								d="M34.2812 18H25.7189C21.9755 18 18.7931 20.5252 17.6294 24.0434C17.2463 25.2017 17.0547 25.7808 17.536 26.3904C18.0172 27 18.8007 27 20.3675 27H39.6325C41.1993 27 41.9827 27 42.4639 26.3904C42.9453 25.7808 42.7538 25.2017 42.3707 24.0434C41.207 20.5252 38.0246 18 34.2812 18Z"
-							></path>
-							<path
-								fill="#FFB672"
-								d="M18 36H17.25C16.0074 36 15 34.9926 15 33.75C15 32.5074 16.0074 31.5 17.25 31.5H29.0916C29.6839 31.5 30.263 31.6754 30.7557 32.0039L33.668 33.9453C34.1718 34.2812 34.8282 34.2812 35.332 33.9453L38.2443 32.0039C38.7371 31.6754 39.3161 31.5 39.9084 31.5H42.75C43.9926 31.5 45 32.5074 45 33.75C45 34.9926 43.9926 36 42.75 36H42M18 36L18.6479 38.5914C19.1487 40.5947 20.9486 42 23.0135 42H36.9865C39.0514 42 40.8513 40.5947 41.3521 38.5914L42 36M18 36H28.5ZM42 36H39.75Z"
-							></path>
-							<path
-								strokeLinejoin="round"
-								strokeLinecap="round"
-								strokeWidth="2.25"
-								stroke="#FF8413"
-								d="M18 36H17.25C16.0074 36 15 34.9926 15 33.75C15 32.5074 16.0074 31.5 17.25 31.5H29.0916C29.6839 31.5 30.263 31.6754 30.7557 32.0039L33.668 33.9453C34.1718 34.2812 34.8282 34.2812 35.332 33.9453L38.2443 32.0039C38.7371 31.6754 39.3161 31.5 39.9084 31.5H42.75C43.9926 31.5 45 32.5074 45 33.75C45 34.9926 43.9926 36 42.75 36H42M18 36L18.6479 38.5914C19.1487 40.5947 20.9486 42 23.0135 42H36.9865C39.0514 42 40.8513 40.5947 41.3521 38.5914L42 36M18 36H28.5M42 36H39.75"
-							></path>
-							<path
-								strokeLinejoin="round"
-								strokeLinecap="round"
-								strokeWidth="3"
-								stroke="#FF8413"
-								d="M34.512 22.5H34.4982"
-							></path>
-							<path
-								strokeLinejoin="round"
-								strokeLinecap="round"
-								strokeWidth="2.25"
-								stroke="#FF8413"
-								d="M27.75 21.75L26.25 23.25"
-							></path>
-						</svg>
-						<div>
-							<span>Cheese Burger</span>
-							<p>Extra Spicy</p>
-							<p>No mayo</p>
+					<div className="checkout">
+						<div className="details">
+							<span>
+								<Checkbox
+									indeterminate={indeterminate}
+									onChange={onCheckAllChange}
+									checked={checkAll}
+								>
+									全选
+								</Checkbox>
+							</span>
 						</div>
-						<InputNumber {...sharedProps} placeholder="Outlined" />
-						<div className="price small">$23.99</div>
+						<div className="checkout--footer">
+							<label className="price">{getTotalPrice()}￥</label>
+							<Button type="primary">立即购买</Button>
+						</div>
 					</div>
-				</div>
-			</div>
-
-			<div className="card checkout">
-				<label className="title">Checkout</label>
-				<div className="details">
-					<span>Your cart subtotal:</span>
-					<span>47.99$</span>
-					<span>Discount through applied coupons:</span>
-					<span>3.99$</span>
-					<span>Shipping fees:</span>
-					<span>4.99$</span>
-				</div>
-				<div className="checkout--footer">
-					<label className="price">
-						<sup>$</sup>57.99
-					</label>
-					<Button type="primary">立即购买</Button>
-				</div>
-			</div>
+				</>
+			)}
 		</>
 	);
 }

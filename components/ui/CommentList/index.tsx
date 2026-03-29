@@ -67,7 +67,7 @@ export default function CommentList({ productId }: CommentListProps) {
 			{isLoading ? (
 				<Skeleton active />
 			) : (
-				<div className="card">
+				<div className="commentList">
 					<Menu
 						selectedKeys={["commentList"]}
 						mode="horizontal"

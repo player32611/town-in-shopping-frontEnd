@@ -51,7 +51,7 @@ export default function SiderBar() {
 			<div className="demo-logo-vertical"></div>
 			<Menu
 				theme="dark"
-				defaultSelectedKeys={[pathName]}
+				selectedKeys={[pathName]}
 				mode="inline"
 				items={items}
 				onClick={({ key }) => handleClick(key)}

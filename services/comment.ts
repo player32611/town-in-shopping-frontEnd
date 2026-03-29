@@ -16,3 +16,8 @@ export async function addComment(data: {
 	);
 	return res.data;
 }
+
+export async function likeComment(data: { id: string }) {
+	const res = await request.post(`/comment/like?id=${data.id}`);
+	return res.data;
+}
