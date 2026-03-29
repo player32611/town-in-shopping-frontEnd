@@ -1,7 +1,9 @@
 import { Rate } from "antd";
-import type { MenuProps, GetRef } from "antd";
+import type { GetRef, MenuProps, TableProps } from "antd";
 
 export type MenuItem = Required<MenuProps>["items"][number];
+
+export type ColumnsType<T extends object> = TableProps<T>["columns"];
 
 export type CartItemProps = {
 	id: string;

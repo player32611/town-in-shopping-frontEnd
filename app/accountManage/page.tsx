@@ -1,6 +1,7 @@
 "use client";
 
 import type { UserList } from "@/types/user";
+import type { ColumnsType } from "@/types/component";
 import { getUserAll, postUserSetRole } from "@/services/user";
 import { postUserDelete } from "@/services/user";
 import { useEffect, useState } from "react";
@@ -8,12 +9,9 @@ import { useMessageStore } from "@/store/messageStore";
 
 import { Avatar, Button, Empty, Popconfirm, Select, Skeleton, Space, Table } from "antd";
 import { UserOutlined } from "@ant-design/icons";
-import type { TableProps } from "antd";
 import { getStorageItem } from "@/lib/storage";
 
-type ColumnsType<T extends object> = TableProps<T>["columns"];
-
-export default function Accounts() {
+export default function AccountManage() {
 	const [data, setData] = useState<UserList[]>([]);
 	const [loading, setLoading] = useState(true);
 	const { messageSuccess, messageError } = useMessageStore();
@@ -143,31 +141,29 @@ export default function Accounts() {
 
 	return (
 		<>
-			<>
-				{loading ? (
-					<>
-						<Skeleton
-							active
-							style={{
-								marginBottom: 20,
-							}}
-						/>
-						<Skeleton
-							active
-							style={{
-								marginBottom: 20,
-							}}
-						/>
-					</>
-				) : (
-					<Table<UserList>
-						columns={columns}
-						pagination={{ placement: ["bottomCenter"] }}
-						dataSource={data}
-						locale={{ emptyText: <Empty description="暂无数据" /> }}
+			{loading ? (
+				<>
+					<Skeleton
+						active
+						style={{
+							marginBottom: 20,
+						}}
 					/>
-				)}
-			</>
+					<Skeleton
+						active
+						style={{
+							marginBottom: 20,
+						}}
+					/>
+				</>
+			) : (
+				<Table<UserList>
+					columns={columns}
+					pagination={{ placement: ["bottomCenter"] }}
+					dataSource={data}
+					locale={{ emptyText: <Empty description="暂无数据" /> }}
+				/>
+			)}
 		</>
 	);
 }

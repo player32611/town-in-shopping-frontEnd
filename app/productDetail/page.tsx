@@ -13,7 +13,7 @@ import { ShoppingCartOutlined } from "@ant-design/icons";
 import type { DescriptionsProps } from "antd";
 import CommentList from "@/components/ui/CommentList";
 
-export default function Product() {
+export default function ProductDetail() {
 	const [data, setData] = useState<Product | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isAddingCart, setIsAddingCart] = useState(false);

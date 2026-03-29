@@ -14,7 +14,6 @@ export default function Comment(props: CommentProps) {
 
 	const handleLike = () => {
 		if (!isLike) {
-			console.log("Like");
 			likeComment({ id: props.id })
 				.then(() => {
 					messageSuccess("点赞成功");

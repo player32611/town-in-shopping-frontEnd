@@ -3,7 +3,12 @@ import { usePathname, useRouter } from "next/navigation";
 import { getStorageItem } from "@/lib/storage";
 import { useMessageStore } from "@/store/messageStore";
 
-import { DesktopOutlined, ShoppingCartOutlined, TeamOutlined } from "@ant-design/icons";
+import {
+	AccountBookOutlined,
+	DesktopOutlined,
+	ShoppingCartOutlined,
+	TeamOutlined,
+} from "@ant-design/icons";
 import { Menu } from "antd";
 
 function getItem(
@@ -23,7 +28,8 @@ function getItem(
 const items: MenuItem[] = [
 	getItem("首页", "/", <DesktopOutlined />),
 	getItem("购物车", "/cart", <ShoppingCartOutlined />),
-	getItem("账号管理", "/accounts", <TeamOutlined />),
+	getItem("商品管理", "/productManage", <AccountBookOutlined />),
+	getItem("账号管理", "/accountManage", <TeamOutlined />),
 ];
 
 export default function SiderBar() {
