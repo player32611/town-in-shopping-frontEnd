@@ -6,7 +6,7 @@ import { postUserDelete } from "@/services/user";
 import { useEffect, useState } from "react";
 import { useMessageStore } from "@/store/messageStore";
 
-import { Avatar, Button, Empty, Skeleton, Space, Table } from "antd";
+import { Avatar, Button, Empty, Popconfirm, Skeleton, Space, Table } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import type { TableProps } from "antd";
 import { getStorageItem } from "@/lib/storage";
@@ -60,14 +60,16 @@ export default function Accounts() {
 		{
 			key: "delete",
 			render: (_, record) => (
-				<Button
-					type="primary"
-					onClick={() => handleDelete(record.id)}
-					disabled={getStorageItem("id") == record.id.toString()}
-					danger
+				<Popconfirm
+					title="确定要删除该用户吗？"
+					okText="确定"
+					cancelText="取消"
+					onConfirm={() => handleDelete(record.id)}
 				>
-					删除
-				</Button>
+					<Button type="primary" disabled={getStorageItem("id") == record.id.toString()} danger>
+						删除
+					</Button>
+				</Popconfirm>
 			),
 		},
 	];
@@ -89,6 +91,13 @@ export default function Accounts() {
 	};
 
 	const handleDelete = (id: string) => {
+		if (!getStorageItem("id")) {
+			messageError("请先登录");
+			return;
+		} else if (getStorageItem("roleId") !== "1") {
+			messageError("无权限");
+			return;
+		}
 		postUserDelete({ id })
 			.then(res => {
 				if (res) {

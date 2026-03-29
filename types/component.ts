@@ -5,12 +5,14 @@ export type MenuItem = Required<MenuProps>["items"][number];
 
 export type CartItemProps = {
 	id: string;
+	productId: string;
 	name: string;
 	picture: string;
 	price: number;
 	amount: number;
 	addTime: string;
-	children?: React.ReactNode;
+	onChange: (id: string, productId: string, amount: number | null) => void;
+	onDelete: (id: string) => void;
 };
 
 export type CommentProps = {

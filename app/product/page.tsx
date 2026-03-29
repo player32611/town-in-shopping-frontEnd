@@ -4,6 +4,9 @@ import { useState, useEffect } from "react";
 import { getProductDetails } from "@/services/product";
 import { useSearchParams } from "next/navigation";
 import type { Product } from "@/types/product";
+import { postInsertCart } from "@/services/cart";
+import { getStorageItem } from "@/lib/storage";
+import { useMessageStore } from "@/store/messageStore";
 
 import { Button, Descriptions, Image, Skeleton, Space } from "antd";
 import { ShoppingCartOutlined } from "@ant-design/icons";
@@ -13,8 +16,10 @@ import CommentList from "@/components/ui/CommentList";
 export default function Product() {
 	const [data, setData] = useState<Product | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
+	const [isAddingCart, setIsAddingCart] = useState(false);
 	const searchParams = useSearchParams();
 	const id = searchParams.get("id") || "";
+	const { messageSuccess, messageError } = useMessageStore();
 
 	const items: DescriptionsProps["items"] = [
 		{
@@ -44,7 +49,24 @@ export default function Product() {
 		},
 	];
 
-	const handleAddCart = async () => {};
+	const handleAddCart = async () => {
+		const userId = getStorageItem("id");
+		if (!userId) {
+			messageError("请先登录");
+			return;
+		}
+		setIsAddingCart(true);
+		postInsertCart({ userId, productId: id })
+			.then(() => {
+				messageSuccess("添加成功");
+			})
+			.catch(() => {
+				messageError("添加失败");
+			})
+			.finally(() => {
+				setIsAddingCart(false);
+			});
+	};
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -68,7 +90,12 @@ export default function Product() {
 				<Space orientation="vertical" size="middle">
 					<Image src={data?.picture} alt={data?.name} width={300} />
 					<Descriptions title={data?.name} items={items} />
-					<Button type="primary" icon={<ShoppingCartOutlined />} onClick={handleAddCart}>
+					<Button
+						type="primary"
+						icon={<ShoppingCartOutlined />}
+						onClick={handleAddCart}
+						disabled={isAddingCart}
+					>
 						添加到购物车
 					</Button>
 					<CommentList productId={id} />

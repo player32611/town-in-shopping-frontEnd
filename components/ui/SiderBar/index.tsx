@@ -41,9 +41,9 @@ export default function SiderBar() {
 				}
 				break;
 			default:
+				router.push(key);
 				break;
 		}
-		router.push(key);
 	};
 
 	return (
