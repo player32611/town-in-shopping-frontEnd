@@ -51,46 +51,6 @@ export default function Search() {
 										image={item.picture}
 									/>
 								))}
-								{data.map(item => (
-									<ProductCard
-										key={item.id}
-										id={item.id}
-										name={item.name}
-										price={item.price}
-										description={item.details}
-										image={item.picture}
-									/>
-								))}
-								{data.map(item => (
-									<ProductCard
-										key={item.id}
-										id={item.id}
-										name={item.name}
-										price={item.price}
-										description={item.details}
-										image={item.picture}
-									/>
-								))}
-								{data.map(item => (
-									<ProductCard
-										key={item.id}
-										id={item.id}
-										name={item.name}
-										price={item.price}
-										description={item.details}
-										image={item.picture}
-									/>
-								))}
-								{data.map(item => (
-									<ProductCard
-										key={item.id}
-										id={item.id}
-										name={item.name}
-										price={item.price}
-										description={item.details}
-										image={item.picture}
-									/>
-								))}
 							</Flex>
 							<Flex justify="center">
 								<Pagination defaultCurrent={1} total={50} />

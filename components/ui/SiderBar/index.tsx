@@ -39,9 +39,9 @@ export default function SiderBar() {
 
 	const handleClick = (key: string) => {
 		switch (key) {
-			case "/accounts":
+			case "/accountManage":
 				if (getStorageItem("roleId") === "1") {
-					router.push("/accounts");
+					router.push("/accountManage");
 				} else {
 					messageError("无权限，请联系管理员");
 				}

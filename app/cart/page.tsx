@@ -3,16 +3,18 @@
 import { useEffect, useState } from "react";
 import { useMessageStore } from "@/store/messageStore";
 import { getCartList, postUpdateCartAmount, postDeleteCartItem } from "@/services/cart";
+import { postUpdateBalance } from "@/services/user";
 import { getStorageItem } from "@/lib/storage";
 import type { Cart } from "@/types/cart";
 
-import { Button, Checkbox, Col, Empty, Row, Skeleton, Spin } from "antd";
+import { Button, Checkbox, Col, Empty, Modal, Row, Skeleton, Spin } from "antd";
 import type { CheckboxProps } from "antd";
 import CartItem from "@/components/commen/CartItem";
 import "./index.scss";
 
 export default function Cart() {
 	const [isLoading, setIsLoading] = useState<boolean>(true);
+	const [isShowModal, setIsShowModal] = useState<boolean>(false);
 	const [data, setData] = useState<Cart[]>([]);
 	const [checkedList, setCheckedList] = useState<string[]>([]);
 	const checkAll = data.length === checkedList.length;
@@ -67,6 +69,32 @@ export default function Cart() {
 			}
 		});
 		return total;
+	};
+	const onBuyProducts = () => {
+		const userId = getStorageItem("id");
+		const balanceStr = getStorageItem("balance");
+		const balance = balanceStr ? parseFloat(balanceStr) : 0;
+		if (!userId) {
+			messageError("请先登录");
+			return;
+		}
+		const total = getTotalPrice();
+		if (!balance || balance < total) {
+			messageError("余额不足");
+		}
+		setIsLoading(true);
+		postUpdateBalance({ userId, balance: balance - getTotalPrice() })
+			.then(() => {
+				messageSuccess("支付成功");
+				setIsShowModal(false);
+				window.location.reload();
+			})
+			.catch(() => {
+				messageError("支付失败");
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
 	};
 
 	useEffect(() => {
@@ -141,10 +169,34 @@ export default function Cart() {
 							</span>
 						</div>
 						<div className="checkout--footer">
-							<label className="price">{getTotalPrice()}￥</label>
-							<Button type="primary">立即购买</Button>
+							<label className="price">合计：{getTotalPrice()}￥</label>
+							<Button
+								type="primary"
+								disabled={!getTotalPrice()}
+								onClick={() => setIsShowModal(true)}
+							>
+								立即购买
+							</Button>
 						</div>
 					</div>
+					<Modal
+						title="确定要支付吗？"
+						closable={{ "aria-label": "Custom Close Button" }}
+						open={isShowModal}
+						onOk={onBuyProducts}
+						onCancel={() => setIsShowModal(false)}
+						footer={[
+							<Button key="back" onClick={() => setIsShowModal(false)}>
+								取消支付
+							</Button>,
+							<Button key="submit" type="primary" onClick={onBuyProducts}>
+								确认支付
+							</Button>,
+						]}
+					>
+						<p>合计：{getTotalPrice()}￥</p>
+						<p>当前余额：{getStorageItem("balance")}￥</p>
+					</Modal>
 					<Spin spinning={isLoading} fullscreen />
 				</>
 			)}

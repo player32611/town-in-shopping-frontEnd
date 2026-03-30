@@ -32,3 +32,17 @@ export type CommentListProps = {
 };
 
 export type RateRef = GetRef<typeof Rate>;
+
+export type AddProductsProps = {
+	isOpen: boolean;
+	handleClose: () => void;
+	refresh: () => void;
+};
+
+export type AddProductsDetails = {
+	name: string;
+	price: number;
+	picture: string;
+	num: number;
+	details: string;
+};

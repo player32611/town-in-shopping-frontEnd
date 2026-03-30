@@ -6,3 +6,7 @@ export type Product = {
 	num: number;
 	details: string;
 };
+
+export interface ProductList extends Product {
+	key: string;
+}

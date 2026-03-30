@@ -4,7 +4,7 @@ import type { UserList } from "@/types/user";
 import type { ColumnsType } from "@/types/component";
 import { getUserAll, postUserSetRole } from "@/services/user";
 import { postUserDelete } from "@/services/user";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useMessageStore } from "@/store/messageStore";
 
 import { Avatar, Button, Empty, Popconfirm, Select, Skeleton, Space, Table } from "antd";
@@ -98,7 +98,7 @@ export default function AccountManage() {
 			});
 	};
 
-	const fetchUsers = async () => {
+	const fetchUsers = useCallback(async () => {
 		try {
 			setLoading(true);
 			const list = await getUserAll();
@@ -106,13 +106,13 @@ export default function AccountManage() {
 				item.key = item.id;
 			});
 			setData(list);
-		} catch (error) {
-			console.error("Failed to fetch users:", error);
+		} catch (err) {
+			messageError("获取用户列表失败" + err);
 			setData([]);
 		} finally {
 			setLoading(false);
 		}
-	};
+	}, [messageError]);
 
 	const handleDelete = (id: string) => {
 		if (!getStorageItem("id")) {
@@ -137,7 +137,7 @@ export default function AccountManage() {
 
 	useEffect(() => {
 		fetchUsers();
-	}, []);
+	}, [fetchUsers]);
 
 	return (
 		<>

@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { getUserById } from "@/services/user";
+import { getStorageItem, removeStorageItem, setStorageItem } from "@/lib/storage";
 
 import type { MenuProps } from "antd";
 import { Avatar, Dropdown, Space } from "antd";
 import { DownOutlined, UserOutlined } from "@ant-design/icons";
-import { getStorageItem, removeStorageItem } from "@/lib/storage";
 
 const items: MenuProps["items"] = [
 	{
@@ -18,6 +19,7 @@ const onClick: MenuProps["onClick"] = ({ key }) => {
 		removeStorageItem("name");
 		removeStorageItem("avatar");
 		removeStorageItem("roleId");
+		removeStorageItem("balance");
 		window.location.reload();
 	}
 };
@@ -26,18 +28,29 @@ export default function UserInfo(props: { handleLogin: () => void }) {
 	const [isLoading, setIsLoading] = useState(true);
 	const [userName, setUserName] = useState<string | null>(null);
 	const [userAvatar, setUserAvatar] = useState<string | null>(null);
-
-	const getData = useCallback(() => {
-		const name = getStorageItem("name");
-		const avatar = getStorageItem("avatar");
-		setUserName(name);
-		setUserAvatar(avatar);
-		setIsLoading(false);
-	}, []);
+	const [balance, setBalance] = useState<number | null>(null);
 
 	useEffect(() => {
+		const getData = () => {
+			const id = getStorageItem("id");
+			if (!id) return;
+			setIsLoading(true);
+			getUserById({ id })
+				.then(res => {
+					setUserName(res.name);
+					setUserAvatar(res.avatar);
+					setBalance(res.balance);
+					setStorageItem("name", res.name);
+					setStorageItem("avatar", res.avatar);
+					setStorageItem("balance", res.balance);
+				})
+				.finally(() => {
+					setIsLoading(false);
+				});
+		};
+
 		getData();
-	}, [getData]);
+	}, []);
 
 	return (
 		<>
@@ -61,6 +74,7 @@ export default function UserInfo(props: { handleLogin: () => void }) {
 						<a onClick={props.handleLogin}>点击登录</a>
 					)}
 					<Avatar size="large" src={userAvatar} icon={<UserOutlined />} />
+					<div>账户余额：{balance}￥</div>
 				</Space>
 			)}
 		</>

@@ -45,6 +45,7 @@ export default function Login(props: { isModalOpen: boolean; handleClose: () => 
 				setStorageItem("name", res.name);
 				setStorageItem("avatar", res.avatar);
 				setStorageItem("roleId", res.roleId);
+				setStorageItem("balance", res.balance);
 				props.handleClose();
 				window.location.reload();
 			} else {
@@ -61,6 +62,7 @@ export default function Login(props: { isModalOpen: boolean; handleClose: () => 
 				setStorageItem("name", res.name);
 				setStorageItem("avatar", res.avatar);
 				setStorageItem("roleId", res.roleId);
+				setStorageItem("balance", res.balance);
 				props.handleClose();
 				window.location.reload();
 			} else {
