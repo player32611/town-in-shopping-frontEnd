@@ -9,7 +9,8 @@ import {
 	ShoppingCartOutlined,
 	TeamOutlined,
 } from "@ant-design/icons";
-import { Menu } from "antd";
+import { Flex, Menu } from "antd";
+import Logo from "@/components/commen/Logo";
 
 function getItem(
 	label: React.ReactNode,
@@ -38,9 +39,17 @@ export default function SiderBar() {
 	const { messageError } = useMessageStore();
 
 	const handleClick = (key: string) => {
+		const roleId = getStorageItem("roleId");
 		switch (key) {
+			case "/productManage":
+				if (roleId === "1" || roleId === "2") {
+					router.push("/productManage");
+				} else {
+					messageError("无权限，请联系管理员");
+				}
+				break;
 			case "/accountManage":
-				if (getStorageItem("roleId") === "1") {
+				if (roleId === "1") {
 					router.push("/accountManage");
 				} else {
 					messageError("无权限，请联系管理员");
@@ -54,7 +63,15 @@ export default function SiderBar() {
 
 	return (
 		<>
-			<div className="demo-logo-vertical"></div>
+			<Flex
+				justify="center"
+				align="center"
+				style={{
+					margin: "10px 0",
+				}}
+			>
+				<Logo></Logo>
+			</Flex>
 			<Menu
 				theme="dark"
 				selectedKeys={[pathName]}
