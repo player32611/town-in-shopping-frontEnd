@@ -103,13 +103,16 @@ export default function UserInfo(props: { handleLogin: () => void }) {
 					setStorageItem("roleId", res.roleId);
 					setStorageItem("balance", res.balance);
 				})
+				.catch(() => {
+					messageError("获取用户信息失败");
+				})
 				.finally(() => {
 					setIsLoading(false);
 				});
 		};
 
 		getData();
-	}, []);
+	}, [messageError]);
 
 	return (
 		<>

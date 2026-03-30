@@ -32,43 +32,65 @@ const tailFormItemLayout: FormItemProps = {
 };
 
 export default function Login(props: { isModalOpen: boolean; handleClose: () => void }) {
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [modalType, setModalType] = useState<"login" | "register">("login");
 	const [form] = Form.useForm();
 	const { messageSuccess, messageError } = useMessageStore();
 
+	const handleChangeType = () => {
+		if (isLoading) return;
+		setModalType(modalType === "login" ? "register" : "login");
+	};
+
 	const handleLogin = (values: { name: string; password: string; remember: boolean }) => {
-		postUserLogin({ name: values.name, password: values.password }).then(res => {
-			if (res) {
-				console.log(res);
-				messageSuccess("登录成功");
-				setStorageItem("id", res.id);
-				setStorageItem("name", res.name);
-				setStorageItem("avatar", res.avatar);
-				setStorageItem("roleId", res.roleId);
-				setStorageItem("balance", res.balance);
-				props.handleClose();
-				window.location.reload();
-			} else {
+		setIsLoading(true);
+		postUserLogin({ name: values.name, password: values.password })
+			.then(res => {
+				if (res) {
+					console.log(res);
+					messageSuccess("登录成功");
+					setStorageItem("id", res.id);
+					setStorageItem("name", res.name);
+					setStorageItem("avatar", res.avatar);
+					setStorageItem("roleId", res.roleId);
+					setStorageItem("balance", res.balance);
+					props.handleClose();
+					window.location.reload();
+				} else {
+					messageError("登录失败");
+				}
+			})
+			.catch(() => {
 				messageError("登录失败");
-			}
-		});
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
 	};
 
 	const handleRegister = (values: { name: string; password: string }) => {
-		postUserRegister({ name: values.name, password: values.password }).then(res => {
-			if (res) {
-				messageSuccess("注册成功");
-				setStorageItem("id", res.id);
-				setStorageItem("name", res.name);
-				setStorageItem("avatar", res.avatar);
-				setStorageItem("roleId", res.roleId);
-				setStorageItem("balance", res.balance);
-				props.handleClose();
-				window.location.reload();
-			} else {
+		setIsLoading(true);
+		postUserRegister({ name: values.name, password: values.password })
+			.then(res => {
+				if (res) {
+					messageSuccess("注册成功");
+					setStorageItem("id", res.id);
+					setStorageItem("name", res.name);
+					setStorageItem("avatar", res.avatar);
+					setStorageItem("roleId", res.roleId);
+					setStorageItem("balance", res.balance);
+					props.handleClose();
+					window.location.reload();
+				} else {
+					messageError("注册失败");
+				}
+			})
+			.catch(() => {
 				messageError("注册失败");
-			}
-		});
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
 	};
 
 	return (
@@ -101,10 +123,10 @@ export default function Login(props: { isModalOpen: boolean; handleClose: () => 
 							</Flex>
 						</Form.Item>
 						<Form.Item>
-							<Button block type="primary" htmlType="submit">
+							<Button block type="primary" htmlType="submit" loading={isLoading}>
 								登录
 							</Button>
-							或者 <a onClick={() => setModalType("register")}>现在注册!</a>
+							或者 <a onClick={handleChangeType}>现在注册!</a>
 						</Form.Item>
 					</Form>
 				) : (
@@ -192,10 +214,10 @@ export default function Login(props: { isModalOpen: boolean; handleClose: () => 
 							</Checkbox>
 						</Form.Item>
 						<Form.Item {...tailFormItemLayout}>
-							<Button block type="primary" htmlType="submit">
+							<Button block type="primary" htmlType="submit" loading={isLoading}>
 								注册
 							</Button>
-							已有账号？ <a onClick={() => setModalType("login")}>现在登录!</a>
+							已有账号？ <a onClick={handleChangeType}>现在登录!</a>
 						</Form.Item>
 					</Form>
 				)}

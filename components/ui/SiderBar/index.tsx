@@ -70,7 +70,7 @@ export default function SiderBar() {
 					margin: "10px 0",
 				}}
 			>
-				<Logo></Logo>
+				<Logo onClick={() => router.push("/")}></Logo>
 			</Flex>
 			<Menu
 				theme="dark"

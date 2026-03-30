@@ -1,8 +1,10 @@
+import { LogoProps } from "@/types/component";
+
 import "./index.scss";
 
-export default function Logo() {
+export default function Logo(props: LogoProps) {
 	return (
-		<button className="brutalist-button">
+		<button className="brutalist-button" onClick={props.onClick}>
 			<div className="ms-logo">
 				<div className="ms-logo-square"></div>
 				<div className="ms-logo-square"></div>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { getProductSearch } from "@/services/product";
 import { useSearchParams } from "next/navigation";
+import { useMessageStore } from "@/store/messageStore";
 import type { Product } from "@/types/product";
 
 import { Flex, Pagination, Empty, Skeleton, Space } from "antd";
@@ -11,6 +12,7 @@ import ProductCard from "@/components/commen/ProductCard";
 export default function Search() {
 	const [data, setData] = useState<Product[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
+	const { messageError } = useMessageStore();
 	const searchParams = useSearchParams();
 	const keyword = searchParams.get("keyword") || "";
 
@@ -20,6 +22,9 @@ export default function Search() {
 				.then(res => {
 					setData(res);
 				})
+				.catch(() => {
+					messageError("获取失败");
+				})
 				.finally(() => {
 					setIsLoading(false);
 				});
@@ -28,7 +33,7 @@ export default function Search() {
 		if (keyword !== null) {
 			fetchData();
 		}
-	}, [keyword]);
+	}, [keyword, messageError]);
 
 	return (
 		<>

@@ -27,6 +27,10 @@ export type CommentProps = {
 	rate: number;
 };
 
+export type LogoProps = {
+	onClick?: () => void;
+};
+
 export type CommentListProps = {
 	productId: string;
 };
