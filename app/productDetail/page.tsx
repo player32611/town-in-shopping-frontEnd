@@ -8,7 +8,7 @@ import { postInsertCart } from "@/services/cart";
 import { getStorageItem } from "@/lib/storage";
 import { useMessageStore } from "@/store/messageStore";
 
-import { Button, Descriptions, Image, Skeleton, Space } from "antd";
+import { Button, Descriptions, Image, Skeleton, Space, Typography } from "antd";
 import { ShoppingCartOutlined } from "@ant-design/icons";
 import type { DescriptionsProps } from "antd";
 import CommentList from "@/components/ui/CommentList";
@@ -24,28 +24,37 @@ export default function ProductDetail() {
 	const items: DescriptionsProps["items"] = [
 		{
 			key: "price",
-			label: "价格",
-			children: `${data?.price}￥`,
+			label: <div style={{ minWidth: 50 }}>售价</div>,
+			span: 1.5,
+			children: <p>{data?.price}￥</p>,
+		},
+		{
+			key: "seller",
+			label: "卖家",
+			span: 1.5,
+			children: <a>{data?.sellerName}</a>,
 		},
 		{
 			key: "num",
 			label: "库存",
-			children: `${data?.num}件`,
+			span: 1.5,
+			children: <p>${data?.num}件</p>,
 		},
 		{
-			key: "3",
-			label: "Live",
-			children: "Hangzhou, Zhejiang",
-		},
-		{
-			key: "4",
-			label: "Remark",
-			children: "empty",
-		},
-		{
-			key: "5",
-			label: "Address",
-			children: "No. 18, Wantang Road, Xihu District, Hangzhou, Zhejiang, China",
+			key: "details",
+			label: "详情",
+			children: (
+				<Typography.Paragraph
+					ellipsis={{
+						rows: 1,
+						expandable: "collapsible",
+						symbol: "展开",
+					}}
+				>
+					{data?.details}
+				</Typography.Paragraph>
+			),
+			span: "filled",
 		},
 	];
 
@@ -72,7 +81,11 @@ export default function ProductDetail() {
 		const fetchData = async () => {
 			getProductDetails({ id })
 				.then(res => {
+					console.log(res);
 					setData(res);
+				})
+				.catch(() => {
+					messageError("获取失败");
 				})
 				.finally(() => {
 					setIsLoading(false);
@@ -80,16 +93,22 @@ export default function ProductDetail() {
 		};
 
 		fetchData();
-	}, [id]);
+	}, [id, messageError]);
 
 	return (
 		<>
 			{isLoading ? (
 				<Skeleton active />
 			) : (
-				<Space orientation="vertical" size="middle">
+				<Space
+					orientation="vertical"
+					size="middle"
+					style={{
+						width: "100%",
+					}}
+				>
 					<Image src={data?.picture} alt={data?.name} width={300} />
-					<Descriptions title={data?.name} items={items} />
+					<Descriptions title={data?.name} items={items} bordered column={4.5} />
 					<Button
 						type="primary"
 						icon={<ShoppingCartOutlined />}

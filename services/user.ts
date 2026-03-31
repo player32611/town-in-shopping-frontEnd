@@ -15,8 +15,10 @@ export async function postUserLogin(data: { name: string; password: string }) {
 	return res.data;
 }
 
-export async function postUserRegister(data: { name: string; password: string }) {
-	const res = await request.post(`/user/register?name=${data.name}&password=${data.password}`);
+export async function postUserRegister(data: { name: string; password: string; avatar: string }) {
+	const res = await request.post(
+		`/user/register?name=${data.name}&password=${data.password}&&avatar=${data.avatar}`,
+	);
 	return res.data;
 }
 

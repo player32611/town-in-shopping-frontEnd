@@ -5,6 +5,7 @@ export type Product = {
 	picture: string;
 	num: number;
 	details: string;
+	sellerName: string;
 };
 
 export interface ProductList extends Product {

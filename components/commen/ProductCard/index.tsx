@@ -5,7 +5,7 @@ import Image from "next/image";
 
 import "./index.scss";
 
-const { Paragraph } = Typography;
+const { Paragraph, Title } = Typography;
 export default function ProductCard(props: {
 	id: string;
 	name: string;
@@ -29,7 +29,15 @@ export default function ProductCard(props: {
 					<Image src={props.image} alt={props.name} width={175} height={100} loading="eager" />
 				</div>
 				<div className="card__text">
-					<p className="card__title">{props.name}</p>
+					<Title
+						className="card__title"
+						level={5}
+						ellipsis={{
+							rows: 1,
+						}}
+					>
+						{props.name}
+					</Title>
 					<ConfigProvider
 						theme={{
 							token: {

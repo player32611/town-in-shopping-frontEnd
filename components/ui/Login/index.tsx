@@ -68,9 +68,9 @@ export default function Login(props: { isModalOpen: boolean; handleClose: () => 
 			});
 	};
 
-	const handleRegister = (values: { name: string; password: string }) => {
+	const handleRegister = (values: { name: string; password: string; avatar: string }) => {
 		setIsLoading(true);
-		postUserRegister({ name: values.name, password: values.password })
+		postUserRegister({ name: values.name, password: values.password, avatar: values.avatar })
 			.then(res => {
 				if (res) {
 					messageSuccess("注册成功");
@@ -162,6 +162,24 @@ export default function Login(props: { isModalOpen: boolean; handleClose: () => 
 						>
 							<Input />
 						</Form.Item>
+
+						<Form.Item
+							name="avatar"
+							label="头像链接"
+							rules={[
+								{
+									type: "url",
+									message: "不是有效的链接",
+								},
+								{
+									required: true,
+									message: "请输入图片链接!",
+								},
+							]}
+						>
+							<Input />
+						</Form.Item>
+
 						<Form.Item
 							name="password"
 							label="密码"
