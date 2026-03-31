@@ -109,10 +109,10 @@ export default function Login(props: { isModalOpen: boolean; handleClose: () => 
 						onFinish={handleLogin}
 					>
 						<Form.Item name="name" rules={[{ required: true, message: "请输入昵称!" }]}>
-							<Input prefix={<UserOutlined />} placeholder="昵称" />
+							<Input prefix={<UserOutlined />} placeholder="昵称" allowClear />
 						</Form.Item>
 						<Form.Item name="password" rules={[{ required: true, message: "请输入密码!" }]}>
-							<Input prefix={<LockOutlined />} type="password" placeholder="密码" />
+							<Input prefix={<LockOutlined />} type="password" placeholder="密码" allowClear />
 						</Form.Item>
 						<Form.Item>
 							<Flex justify="space-between" align="center">
@@ -143,7 +143,7 @@ export default function Login(props: { isModalOpen: boolean; handleClose: () => 
 							tooltip="其他人如何称呼您？"
 							rules={[{ required: true, message: "请输入昵称!", whitespace: true }]}
 						>
-							<Input />
+							<Input allowClear />
 						</Form.Item>
 
 						<Form.Item
@@ -160,7 +160,7 @@ export default function Login(props: { isModalOpen: boolean; handleClose: () => 
 								},
 							]}
 						>
-							<Input />
+							<Input allowClear />
 						</Form.Item>
 
 						<Form.Item
@@ -177,7 +177,7 @@ export default function Login(props: { isModalOpen: boolean; handleClose: () => 
 								},
 							]}
 						>
-							<Input />
+							<Input allowClear />
 						</Form.Item>
 
 						<Form.Item
@@ -191,7 +191,7 @@ export default function Login(props: { isModalOpen: boolean; handleClose: () => 
 							]}
 							hasFeedback
 						>
-							<Input.Password />
+							<Input.Password allowClear />
 						</Form.Item>
 						<Form.Item
 							name="confirm"
@@ -213,7 +213,7 @@ export default function Login(props: { isModalOpen: boolean; handleClose: () => 
 								}),
 							]}
 						>
-							<Input.Password />
+							<Input.Password autoComplete="new-password" allowClear />
 						</Form.Item>
 
 						<Form.Item
