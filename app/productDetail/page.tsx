@@ -81,7 +81,6 @@ export default function ProductDetail() {
 		const fetchData = async () => {
 			getProductDetails({ id })
 				.then(res => {
-					console.log(res);
 					setData(res);
 				})
 				.catch(() => {
